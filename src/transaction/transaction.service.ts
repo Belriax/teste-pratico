@@ -8,7 +8,6 @@ import { Repository } from 'typeorm';
 import { Transaction } from './entities/transaction.entity';
 import { AuthService } from 'src/auth/auth.service';
 
-// DTOs Tipados
 interface CreateTransactionDto {
   type: 'DEPOSIT' | 'WITHDRAW';
   amount: number;
@@ -29,11 +28,9 @@ export class TransactionsService {
     private readonly authService: AuthService,
   ) {}
 
-  // Método para Depósito e Saque
   async createTransaction(dto: CreateTransactionDto): Promise<Transaction> {
     const { type, amount, userId } = dto;
 
-    // Validações iniciais
     if (!type || !['DEPOSIT', 'WITHDRAW'].includes(type)) {
       throw new BadRequestException(
         'Transaction type must be DEPOSIT or WITHDRAW.',
@@ -42,12 +39,9 @@ export class TransactionsService {
     if (amount <= 0) {
       throw new BadRequestException('Amount must be greater than zero.');
     }
-
-    // Busca o usuário
     const user = await this.authService.findById(userId);
     if (!user) throw new NotFoundException('User not found.');
 
-    // Lógica de Depósito e Saque
     if (type === 'DEPOSIT') {
       user.balance = Number(user.balance) + Number(amount);
     } else if (type === 'WITHDRAW') {
@@ -57,10 +51,8 @@ export class TransactionsService {
       user.balance = Number(user.balance) - Number(amount);
     }
 
-    // Atualiza o saldo do usuário
     await this.authService.updateUserBalance(user.id, user.balance);
 
-    // Cria e salva a transação
     try {
       const transaction = this.transactionRepository.create({
         type,
@@ -73,11 +65,9 @@ export class TransactionsService {
     }
   }
 
-  // Método para Transferências
   async transferTransaction(dto: TransferTransactionDto): Promise<Transaction> {
     const { amount, userId, targetUserId } = dto;
 
-    // Validações iniciais
     if (amount <= 0) {
       throw new BadRequestException('Amount must be greater than zero.');
     }
@@ -85,7 +75,6 @@ export class TransactionsService {
       throw new BadRequestException('Cannot transfer to the same user.');
     }
 
-    // Busca os usuários
     const user = await this.authService.findById(userId);
     const targetUser = await this.authService.findById(targetUserId);
 
@@ -96,7 +85,6 @@ export class TransactionsService {
       throw new BadRequestException('Insufficient balance for transfer.');
     }
 
-    // Atualiza os saldos
     user.balance = Number(user.balance) - Number(amount);
     targetUser.balance = Number(targetUser.balance) + Number(amount);
 
@@ -107,7 +95,6 @@ export class TransactionsService {
         targetUser.balance,
       );
 
-      // Cria e salva a transação
       const transaction = this.transactionRepository.create({
         type: 'TRANSFER',
         amount,
@@ -120,7 +107,6 @@ export class TransactionsService {
     }
   }
 
-  // Buscar transações de um usuário
   async getTransactionsByUser(userId: number): Promise<Transaction[]> {
     if (!userId) {
       throw new BadRequestException('User ID is required.');

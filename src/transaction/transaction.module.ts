@@ -6,12 +6,9 @@ import { AuthModule } from 'src/auth/auth.module';
 import { TransactionsController } from './transaction.controller';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Transaction]), // Registra o TransactionRepository
-    AuthModule, // Importa UserModule para acessar UserService
-  ],
+  imports: [TypeOrmModule.forFeature([Transaction]), AuthModule],
   controllers: [TransactionsController],
   providers: [TransactionsService],
-  exports: [TransactionsService], // Exporta para outros módulos, se necessário
+  exports: [TransactionsService],
 })
 export class TransactionModule {}
