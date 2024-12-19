@@ -30,7 +30,7 @@ export class AuthService {
       where: { email: loginUserDto.email },
     });
     if (!user || user.password !== loginUserDto.password) {
-      throw new UnauthorizedException('Credenciais inválidas');
+      throw new UnauthorizedException('usuário ou senha incorreto.');
     }
     const payload = { username: user.email, sub: user.id };
     return {
