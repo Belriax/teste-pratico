@@ -30,7 +30,7 @@ export class AuthService {
       where: { email: loginUserDto.email },
     });
     if (!user || user.password !== loginUserDto.password) {
-      throw new UnauthorizedException('usuário ou senha incorreto.');
+      throw new UnauthorizedException('Usuário ou senha incorreto.');
     }
     const payload = { username: user.email, sub: user.id };
     return {
@@ -40,24 +40,24 @@ export class AuthService {
 
   async findById(id: number): Promise<User> {
     if (!id || id <= 0) {
-      throw new BadRequestException('Invalid user ID.');
+      throw new BadRequestException('ID do usuário inválido.');
     }
 
     const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found.`);
+      throw new NotFoundException(`ID ${id} do usuário não encontrado.`);
     }
     return user;
   }
 
   async findByEmail(email: string): Promise<User> {
     if (!email || !this.isValidEmail(email)) {
-      throw new BadRequestException('Invalid email format.');
+      throw new BadRequestException('Email inválido, utilize um email válido.');
     }
 
     const user = await this.userRepository.findOne({ where: { email } });
     if (!user) {
-      throw new NotFoundException(`User with email ${email} not found.`);
+      throw new NotFoundException(`Email ${email} do usário não encontrado.`);
     }
     return user;
   }
@@ -69,7 +69,7 @@ export class AuthService {
 
     const user = await this.findById(userId);
     if (!user) {
-      throw new NotFoundException('User not found.');
+      throw new NotFoundException('Usuário não encontrado.');
     }
 
     try {
