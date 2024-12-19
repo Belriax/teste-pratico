@@ -6,7 +6,6 @@ import { PostgresConfigServices } from './config/postgres.config.service';
 import { BullModule } from '@nestjs/bull';
 import { AuthModule } from './auth/auth.module';
 import { TransactionModule } from './transaction/transaction.module';
-import { QueueController } from './queue/queue.controller';
 import { QueueModule } from './queue/queue.module';
 
 @Module({
@@ -25,7 +24,7 @@ import { QueueModule } from './queue/queue.module';
     TransactionModule,
     QueueModule,
   ],
-  controllers: [AppController, QueueController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}

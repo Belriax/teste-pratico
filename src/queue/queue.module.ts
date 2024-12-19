@@ -1,7 +1,14 @@
 import { Module } from '@nestjs/common';
-import { QueueService } from './queue.service';
+import { BullModule } from '@nestjs/bull';
+import { DailyReportProcessor } from './daily-repost.processor';
+import { ReportScheduler } from './report.scheduler';
 
 @Module({
-  providers: [QueueService]
+  imports: [
+    BullModule.registerQueue({
+      name: 'transactions',
+    }),
+  ],
+  providers: [DailyReportProcessor, ReportScheduler],
 })
 export class QueueModule {}
