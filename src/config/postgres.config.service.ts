@@ -12,7 +12,7 @@ export class PostgresConfigServices implements TypeOrmOptionsFactory {
       password: process.env.DB_PASSWORD || 'Bemafig32##',
       database: process.env.DB_NAME || 'testedb',
       entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-      synchronize: true, // Deve ser false em produção
+      synchronize: true,
     };
   }
 }

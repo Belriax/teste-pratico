@@ -5,7 +5,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostgresConfigServices } from './config/postgres.config.service';
 import { BullModule } from '@nestjs/bull';
 import { AuthModule } from './auth/auth.module';
-import { TransactionsModule } from './transactions/transactions.module';
+import { TransactionModule } from './transaction/transaction.module';
+import { QueueController } from './queue/queue.controller';
+import { QueueModule } from './queue/queue.module';
 
 @Module({
   imports: [
@@ -20,9 +22,10 @@ import { TransactionsModule } from './transactions/transactions.module';
       },
     }),
     AuthModule,
-    TransactionsModule,
+    TransactionModule,
+    QueueModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, QueueController],
   providers: [AppService],
 })
 export class AppModule {}
