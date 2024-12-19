@@ -45,10 +45,10 @@ export class TransactionsService {
     if (type === 'DEPOSIT') {
       user.balance = Number(user.balance) + Number(amount);
     } else if (type === 'WITHDRAW') {
-      if (Number(user.balance) < Number(amount)) {
+      if (+user.balance < +amount) {
         throw new BadRequestException('Saldo insuficiente.');
       }
-      user.balance = Number(user.balance) - Number(amount);
+      user.balance = +user.balance - +amount;
     }
 
     await this.authService.updateUserBalance(user.id, user.balance);
