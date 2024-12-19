@@ -8,7 +8,6 @@ import { TransactionsService } from './transaction.service';
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
-  // Rota para Depósito e Saque
   @Post()
   @ApiBody({ type: CreateTransactionDto })
   @ApiResponse({
@@ -20,7 +19,6 @@ export class TransactionsController {
     return this.transactionsService.createTransaction(dto);
   }
 
-  // Rota para Transferências
   @Post('transfer')
   @ApiBody({ type: TransferTransactionDto })
   @ApiResponse({
@@ -32,7 +30,6 @@ export class TransactionsController {
     return this.transactionsService.transferTransaction(dto);
   }
 
-  // Buscar transações de um usuário
   @Get(':userId')
   @ApiParam({ name: 'userId', description: 'ID do usuário' })
   @ApiResponse({ status: 200, description: 'Lista de transações do usuário.' })
