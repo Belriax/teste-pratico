@@ -6,7 +6,7 @@ export class CreateTransactionDto {
   @IsEnum(['DEPOSIT', 'WITHDRAW'])
   type: 'DEPOSIT' | 'WITHDRAW';
 
-  @ApiProperty({ example: 100, description: 'Valor da transação' })
+  @ApiProperty({ example: 150, description: 'Valor da transação' })
   @IsNumber()
   @IsPositive()
   amount: number;

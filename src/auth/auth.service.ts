@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -31,5 +36,70 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
     };
+  }
+
+  /**
+   * Busca um usuário por ID
+   * @param id ID do usuário
+   */
+  async findById(id: number): Promise<User> {
+    if (!id || id <= 0) {
+      throw new BadRequestException('Invalid user ID.');
+    }
+
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found.`);
+    }
+    return user;
+  }
+
+  /**
+   * Busca um usuário pelo e-mail
+   * @param email Email do usuário
+   */
+  async findByEmail(email: string): Promise<User> {
+    if (!email || !this.isValidEmail(email)) {
+      throw new BadRequestException('Invalid email format.');
+    }
+
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new NotFoundException(`User with email ${email} not found.`);
+    }
+    return user;
+  }
+
+  /**
+   * Atualiza o saldo de um usuário
+   * @param userId ID do usuário
+   * @param newBalance Novo saldo do usuário
+   */
+  async updateUserBalance(userId: number, newBalance: number): Promise<User> {
+    if (newBalance < 0) {
+      throw new BadRequestException('Balance cannot be negative.');
+    }
+
+    const user = await this.findById(userId);
+    if (!user) {
+      throw new NotFoundException('User not found.');
+    }
+
+    try {
+      user.balance = newBalance;
+      return await this.userRepository.save(user);
+    } catch (error) {
+      return error;
+    }
+  }
+
+  /**
+   * Valida o formato do e-mail
+   * @param email E-mail a ser validado
+   * @returns boolean
+   */
+  private isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   }
 }
