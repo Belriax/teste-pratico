@@ -38,10 +38,6 @@ export class AuthService {
     };
   }
 
-  /**
-   * Busca um usuário por ID
-   * @param id ID do usuário
-   */
   async findById(id: number): Promise<User> {
     if (!id || id <= 0) {
       throw new BadRequestException('Invalid user ID.');
@@ -54,10 +50,6 @@ export class AuthService {
     return user;
   }
 
-  /**
-   * Busca um usuário pelo e-mail
-   * @param email Email do usuário
-   */
   async findByEmail(email: string): Promise<User> {
     if (!email || !this.isValidEmail(email)) {
       throw new BadRequestException('Invalid email format.');
@@ -70,11 +62,6 @@ export class AuthService {
     return user;
   }
 
-  /**
-   * Atualiza o saldo de um usuário
-   * @param userId ID do usuário
-   * @param newBalance Novo saldo do usuário
-   */
   async updateUserBalance(userId: number, newBalance: number): Promise<User> {
     if (newBalance < 0) {
       throw new BadRequestException('Balance cannot be negative.');
@@ -93,11 +80,6 @@ export class AuthService {
     }
   }
 
-  /**
-   * Valida o formato do e-mail
-   * @param email E-mail a ser validado
-   * @returns boolean
-   */
   private isValidEmail(email: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);

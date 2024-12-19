@@ -24,7 +24,7 @@ export class JwtAuthGuard implements CanActivate {
       request.user = decoded; // Salva os dados do token no objeto de requisição
       return true;
     } catch (error) {
-      return false;
+      return error;
     }
   }
 }

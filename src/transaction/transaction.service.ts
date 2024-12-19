@@ -33,20 +33,20 @@ export class TransactionsService {
 
     if (!type || !['DEPOSIT', 'WITHDRAW'].includes(type)) {
       throw new BadRequestException(
-        'Transaction type must be DEPOSIT or WITHDRAW.',
+        'O Tipo de transação deve ser DEPÓSITO OU SAQUE!',
       );
     }
     if (amount <= 0) {
       throw new BadRequestException('Amount must be greater than zero.');
     }
     const user = await this.authService.findById(userId);
-    if (!user) throw new NotFoundException('User not found.');
+    if (!user) throw new NotFoundException('Usuário não encontrado.');
 
     if (type === 'DEPOSIT') {
       user.balance = Number(user.balance) + Number(amount);
     } else if (type === 'WITHDRAW') {
       if (Number(user.balance) < Number(amount)) {
-        throw new BadRequestException('Insufficient balance.');
+        throw new BadRequestException('Saldo insuficiente.');
       }
       user.balance = Number(user.balance) - Number(amount);
     }
