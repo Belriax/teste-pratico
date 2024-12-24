@@ -22,78 +22,193 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+# Financial Transactions API
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Uma API desenvolvida em **Node.js** com **NestJS**, **TypeORM**, e **PostgreSQL** para gerenciar transações financeiras, incluindo depósitos, saques e transferências entre usuários.
 
-## Project setup
+---
+
+## 📋 Funcionalidades
+
+- Cadastro de usuários com **e-mail** e senhas criptografadas.
+- Autenticação segura utilizando **JWT**.
+- Operações de depósito e saque no saldo do usuário.
+- Transferências entre usuários com validações de saldo.
+- Consulta de transações associadas a cada usuário.
+- Validações robustas para garantir a integridade dos dados.
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+- **Node.js**: Ambiente de execução.
+- **NestJS**: Framework para aplicações escaláveis.
+- **TypeORM**: ORM para manipulação de banco de dados.
+- **PostgreSQL**: Banco de dados relacional.
+- **Redis**: Para gerenciamento de filas com **Bull**.
+- **Docker**: Containerização para **Redis** e **PostgreSQL**.
+- **Swagger**: Documentação automatizada da API.
+- **Bcrypt**: Criptografia de senhas.
+- **JWT**: Token seguro para autenticação.
+
+---
+
+## 📦 Pré-requisitos
+
+Certifique-se de ter as seguintes ferramentas instaladas:
+
+1. **Node.js** (v14 ou superior): [Baixar Node.js](https://nodejs.org)
+2. **Docker e Docker Compose**: [Baixar Docker](https://www.docker.com)
+3. **Git**: [Baixar Git](https://git-scm.com)
+
+---
+
+## 💻 Passo a Passo para Rodar o Projeto
+
+### 1. Clone o Repositório
 
 ```bash
-$ npm install
+git clone https://github.com/Viana-AlvesTiago/transactions-system.git
+cd transactions-system
 ```
 
-## Compile and run the project
+### 2. Instale as Dependências
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-## Run tests
+### 3. Configure as Variáveis de Ambiente
+
+Crie um arquivo `.env` na raiz do projeto com o seguinte conteúdo:
+
+```plaintext
+# Configurações do Banco de Dados
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+DATABASE_USER=postgres
+DATABASE_PASSWORD=postgres
+DATABASE_NAME=financial_system
+
+# Configuração do JWT
+JWT_SECRET=your_jwt_secret_key
+
+# Configuração do Redis
+REDIS_HOST=localhost
+REDIS_PORT=6379
+
+# Porta do servidor
+PORT=3000
+```
+
+### 4. Suba os Containers do Docker
+
+Certifique-se de que as portas **5432** (PostgreSQL) e **6379** (Redis) estejam disponíveis e execute:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+docker-compose up -d
 ```
 
-## Deployment
+### 5. Execute as Migrations
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Crie as tabelas necessárias no banco de dados:
 
 ```bash
-$ npm install -g mau
-$ mau deploy
+npm run typeorm:migration:run
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### 6. Inicie o Servidor
 
-## Resources
+Inicie o servidor em modo de desenvolvimento:
 
-Check out a few resources that may come in handy when working with NestJS:
+```bash
+npm run start:dev
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### 7. Acesse a Documentação da API
 
-## Support
+Acesse a interface Swagger: [http://localhost:3000/api/docs](http://localhost:3000/api/docs)
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+---
 
-## Stay in touch
+## 🧪 Testes
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Para rodar os testes unitários, utilize:
 
-## License
+```bash
+npm run test
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+---
+
+## 📂 Estrutura do Projeto
+
+```plaintext
+src/
+│-- auth/  
+│   │-- auth.controller.ts         # Controlador do módulo de autenticação  
+│   │-- auth.dto.ts                # DTOs para autenticação  
+│   │-- auth.module.ts             # Módulo de autenticação  
+│   │-- auth.service.spec.ts       # Testes unitários para o serviço de autenticação  
+│   │-- auth.service.ts            # Serviço de autenticação  
+│   │-- jwt.strategy.ts            # Estratégia de autenticação JWT  
+│
+│-- queue/  
+│   │-- daily-report.processor.ts  # Processador para relatórios diários  
+│   │-- queue.module.ts            # Módulo de gerenciamento de filas  
+│   │-- queue.service.spec.ts      # Testes unitários do serviço de filas  
+│   │-- report.scheduler.ts        # Agendador para geração de relatórios  
+│   │-- transaction.process.ts     # Processamento de transações em fila  
+│
+│-- transactions/  
+│   │-- transaction.dto.ts         # DTOs para operações de transações  
+│   │-- transaction.entity.ts      # Entidade de transação  
+│   │-- transactions.controller.ts # Controlador do módulo de transações  
+│   │-- transactions.module.ts     # Módulo de transações  
+│   │-- transactions.service.spec.ts # Testes unitários para o serviço de transações  
+│   │-- transactions.service.ts    # Serviço de transações  
+│
+│-- user/  
+│   │-- user.controller.ts         # Controlador do módulo de usuários  
+│   │-- user.dto.ts                # DTOs para operações de usuário  
+│   │-- user.entity.ts             # Entidade de usuário  
+│   │-- user.module.ts             # Módulo de usuários  
+│   │-- user.service.spec.ts       # Testes unitários do serviço de usuários  
+│   │-- user.service.ts            # Serviço de usuários  
+│
+│-- app.module.ts                  # Módulo principal da aplicação  
+│-- main.ts                        # Arquivo principal de execução  
+```
+
+### Outros Arquivos
+
+```plaintext
+.env                              # Variáveis de ambiente  
+.eslintrc.js                      # Configurações do ESLint  
+.gitignore                        # Arquivos ignorados pelo Git  
+.prettierrc                       # Configurações do Prettier  
+docker-compose.override.yml       # Configuração extra do Docker Compose  
+```
+
+---
+
+## 🔑 Endpoints Importantes
+
+- **Cadastro de Usuários**:  
+  `POST /users/signup`  
+- **Login**:  
+  `POST /auth/signin`  
+- **Depósito e Saque**:  
+  `POST /transactions`  
+- **Transferência**:  
+  `POST /transactions/transfer`  
+- **Listar Transações**:  
+  `GET /transactions/:userId`  
+
+---
+
+## 📞 Contato
+
+- **Nome**: Gleicon Sousa dos Santos  
+- **E-mail**: [gleiconsousa@gmail.com](mailto:gleiconsousa@gmail.com)  
+- **GitHub**: [https://github.com/belriax](https://github.com/belriax)
