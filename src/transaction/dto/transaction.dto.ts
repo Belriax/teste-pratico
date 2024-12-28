@@ -2,11 +2,14 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsNumber, IsPositive, IsInt } from 'class-validator';
 
 export class CreateTransactionDto {
-  @ApiProperty({ example: 'DEPOSIT', description: 'Tipo da transação' })
-  @IsEnum(['DEPOSIT', 'WITHDRAW'])
-  type: 'DEPOSIT' | 'WITHDRAW';
+  @ApiProperty({
+    example: 'DEPOSITO || SAQUE',
+    description: 'Tipo da transação',
+  })
+  @IsEnum(['DEPOSITO', 'SAQUE', 'TRASNFERIR'])
+  type: 'DEPOSITO' | 'SAQUE' | 'TRASNFEIR';
 
-  @ApiProperty({ example: 150, description: 'Valor da transação' })
+  @ApiProperty({ example: 50, description: 'Valor da transação' })
   @IsNumber()
   @IsPositive()
   amount: number;

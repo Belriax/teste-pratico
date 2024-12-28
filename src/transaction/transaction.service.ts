@@ -2,16 +2,17 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Transaction } from './entities/transaction.entity';
 import { AuthService } from 'src/auth/auth.service';
-// import { CreateTransactionDto } from './dto/transaction.dto';
 import {
   CreateTransactionDto,
   TransferTransactionDto,
 } from './dto/transaction.dto';
+import { User } from 'src/auth/entities/user.entity';
 
 @Injectable()
 export class TransactionsService {
@@ -21,33 +22,48 @@ export class TransactionsService {
     private readonly authService: AuthService,
   ) {}
 
-  async createTransaction(
-    createTransactionDto: CreateTransactionDto,
-  ): Promise<Transaction> {
-    const { type, amount, userId } = createTransactionDto;
-
-    if (!type || !['DEPOSIT', 'WITHDRAW'].includes(type)) {
+  private validateTransactionType(type: string): void {
+    if (!type || !['DEPOSITO', 'SAQUE'].includes(type)) {
       throw new BadRequestException(
-        'O Tipo de transação deve ser DEPÓSITO OU SAQUE!',
+        'O tipo de transação deve ser DEPOSITO OU SAQUE!',
       );
     }
+  }
+
+  private validateTransactionAmount(amount: number): void {
     if (amount <= 0) {
-      throw new BadRequestException('Amount must be greater than zero.');
+      throw new BadRequestException('O valor deve ser maior que zero');
     }
+  }
+
+  private async getUserById(userId: number): Promise<User> {
     const user = await this.authService.findById(userId);
-    if (!user) throw new NotFoundException('Usuário não encontrado.');
-
-    if (type === 'DEPOSIT') {
-      user.balance = Number(user.balance) + Number(amount);
-    } else if (type === 'WITHDRAW') {
-      if (+user.balance < +amount) {
-        throw new BadRequestException('Saldo insuficiente.');
-      }
-      user.balance = +user.balance - +amount;
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado.');
     }
+    return user;
+  }
 
+  private handleDeposit(amount: number, user: User): void {
+    user.balance += amount;
+  }
+
+  private handleWithDraw(amount: number, user: User): void {
+    if (user.balance < amount) {
+      throw new BadRequestException('Saldo insuficiente');
+    }
+    user.balance -= amount;
+  }
+
+  private async updateUserBalance(user: User): Promise<void> {
     await this.authService.updateUserBalance(user.id, user.balance);
+  }
 
+  private async createAndSaveTransaction(
+    type: string,
+    amount: number,
+    user: User,
+  ): Promise<Transaction> {
     try {
       const transaction = this.transactionRepository.create({
         type,
@@ -56,8 +72,66 @@ export class TransactionsService {
       });
       return await this.transactionRepository.save(transaction);
     } catch (error) {
-      return error;
+      throw new InternalServerErrorException(
+        'Erro ao salvar a transação.',
+        error,
+      );
     }
+  }
+
+  async createTransaction(
+    createTransactionDto: CreateTransactionDto,
+  ): Promise<Transaction> {
+    const { type, amount, userId } = createTransactionDto;
+
+    this.validateTransactionType(type);
+    this.validateTransactionAmount(amount);
+
+    const user = await this.getUserById(userId);
+
+    if (type === 'DEPOSITO') {
+      this.handleDeposit(amount, user);
+    } else if (type === 'SAQUE') {
+      this.handleWithDraw(amount, user);
+    }
+
+    await this.updateUserBalance(user);
+
+    return await this.createAndSaveTransaction(type, amount, user);
+
+    // if (!type || !['DEPOSITO', 'SAQUE'].includes(type)) {
+    //   throw new BadRequestException(
+    //     'O Tipo de transação deve ser DEPÓSITO OU SAQUE!',
+    //   );
+    // }
+    // if (amount <= 0) {
+    //   throw new BadRequestException('O Valor deve ser maior que zero.');
+    // }
+    // const user = await this.authService.findById(userId);
+    // if (!user) throw new NotFoundException('Usuário não encontrado.');
+
+    // if (type === 'DEPOSITO') {
+    //   user.balance = user.balance + amount;
+    // } else if (type === 'SAQUE') {
+    //   if (+user.balance < amount) {
+    //     throw new BadRequestException('Saldo insuficiente.');
+    //   }
+    //   user.balance = user.balance - amount;
+    // }
+
+    // await this.authService.updateUserBalance(user.id, user.balance);
+
+    // try {
+    //   const transaction = this.transactionRepository.create({
+    //     type,
+    //     amount,
+    //     user,
+    //   });
+
+    //   return await this.transactionRepository.save(transaction);
+    // } catch (error) {
+    //   return error;
+    // }
   }
 
   async transferTransaction(
@@ -66,24 +140,29 @@ export class TransactionsService {
     const { amount, userId, targetUserId } = transferTransactionDto;
 
     if (amount <= 0) {
-      throw new BadRequestException('Amount must be greater than zero.');
+      throw new BadRequestException(
+        'O valor da transação deve ser maior que 0.',
+      );
     }
     if (userId === targetUserId) {
-      throw new BadRequestException('Cannot transfer to the same user.');
+      throw new BadRequestException(
+        'Não é possível transferir para o mesmo usuário.',
+      );
     }
 
     const user = await this.authService.findById(userId);
     const targetUser = await this.authService.findById(targetUserId);
 
-    if (!user) throw new NotFoundException('User not found.');
-    if (!targetUser) throw new NotFoundException('Target user not found.');
+    if (!user) throw new NotFoundException('Usuário não encontrado.');
+    if (!targetUser)
+      throw new NotFoundException('Id do usuário não encontrado.');
 
-    if (Number(user.balance) < Number(amount)) {
-      throw new BadRequestException('Insufficient balance for transfer.');
+    if (user.balance < amount) {
+      throw new BadRequestException('Saldo insuficiente para transação.');
     }
 
-    user.balance = Number(user.balance) - Number(amount);
-    targetUser.balance = Number(targetUser.balance) + Number(amount);
+    user.balance = user.balance - amount;
+    targetUser.balance = targetUser.balance + amount;
 
     try {
       await this.authService.updateUserBalance(user.id, user.balance);
@@ -93,7 +172,7 @@ export class TransactionsService {
       );
 
       const transaction = this.transactionRepository.create({
-        type: 'TRANSFER',
+        type: 'TRANSFERIR',
         amount,
         user,
         targetUser,

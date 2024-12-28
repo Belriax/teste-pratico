@@ -7,16 +7,13 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from 'src/auth/entities/user.entity';
-// import { IsString } from 'class-validator';
-
 @Entity('transactions')
 export class Transaction {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  // @IsString()
-  type: 'DEPOSIT' | 'WITHDRAW' | 'TRANSFER';
+  type: string;
 
   @Column('decimal', { precision: 10, scale: 2 })
   amount: number;
