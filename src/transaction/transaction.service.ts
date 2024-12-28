@@ -7,18 +7,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Transaction } from './entities/transaction.entity';
 import { AuthService } from 'src/auth/auth.service';
-
-interface CreateTransactionDto {
-  type: 'DEPOSIT' | 'WITHDRAW';
-  amount: number;
-  userId: number;
-}
-
-interface TransferTransactionDto {
-  amount: number;
-  userId: number;
-  targetUserId: number;
-}
+// import { CreateTransactionDto } from './dto/transaction.dto';
+import {
+  CreateTransactionDto,
+  TransferTransactionDto,
+} from './dto/transaction.dto';
 
 @Injectable()
 export class TransactionsService {
@@ -28,8 +21,10 @@ export class TransactionsService {
     private readonly authService: AuthService,
   ) {}
 
-  async createTransaction(dto: CreateTransactionDto): Promise<Transaction> {
-    const { type, amount, userId } = dto;
+  async createTransaction(
+    createTransactionDto: CreateTransactionDto,
+  ): Promise<Transaction> {
+    const { type, amount, userId } = createTransactionDto;
 
     if (!type || !['DEPOSIT', 'WITHDRAW'].includes(type)) {
       throw new BadRequestException(
@@ -65,8 +60,10 @@ export class TransactionsService {
     }
   }
 
-  async transferTransaction(dto: TransferTransactionDto): Promise<Transaction> {
-    const { amount, userId, targetUserId } = dto;
+  async transferTransaction(
+    transferTransactionDto: TransferTransactionDto,
+  ): Promise<Transaction> {
+    const { amount, userId, targetUserId } = transferTransactionDto;
 
     if (amount <= 0) {
       throw new BadRequestException('Amount must be greater than zero.');

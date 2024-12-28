@@ -1,6 +1,9 @@
 import { Controller, Post, Get, Param, Body } from '@nestjs/common';
 import { ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateTransactionDto, TransferTransactionDto } from './transation.dto';
+import {
+  CreateTransactionDto,
+  TransferTransactionDto,
+} from './dto/transaction.dto';
 import { TransactionsService } from './transaction.service';
 
 @ApiTags('transactions')
