@@ -43,9 +43,6 @@ export class TransactionsService {
   }
 
   private handleDeposit(amount: number, user: User): void {
-    if (!+user.balance || !amount) {
-      throw new BadRequestException('Erro ao fazer deposito!');
-    }
     user.balance += amount;
   }
 
