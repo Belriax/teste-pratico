@@ -1,11 +1,11 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
+// import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   constructor(
-    private readonly reflector: Reflector,
+    // private readonly reflector: Reflector,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -21,7 +21,7 @@ export class JwtAuthGuard implements CanActivate {
 
     try {
       const decoded = this.jwtService.verify(token);
-      request.user = decoded; // Salva os dados do token no objeto de requisição
+      request.user = decoded;
       return true;
     } catch (error) {
       return error;

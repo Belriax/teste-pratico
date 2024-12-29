@@ -11,26 +11,37 @@ import { TransactionsService } from './transaction.service';
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
-  @Post()
+  @Post('depositar')
   @ApiBody({ type: CreateTransactionDto })
   @ApiResponse({
     status: 201,
-    description: 'Depósito ou saque realizado com sucesso.',
+    description: 'Depósito realizado com sucesso.',
   })
   @ApiResponse({ status: 400, description: 'Requisição inválida.' })
-  async createTransaction(@Body() dto: CreateTransactionDto) {
-    return this.transactionsService.createTransaction(dto);
+  async createDeposit(@Body() createTransactionDto: CreateTransactionDto) {
+    return this.transactionsService.createTransaction(createTransactionDto);
   }
 
-  @Post('transfer')
+  @Post('sacar')
+  @ApiBody({ type: CreateTransactionDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Saque Realizado com sucesso!',
+  })
+  @ApiResponse({ status: 400, description: 'Requisição inválida.' })
+  async createWithDraw(@Body() createTransactionDto: CreateTransactionDto) {
+    return this.transactionsService.createWithDraw(createTransactionDto);
+  }
+
+  @Post('transferir')
   @ApiBody({ type: TransferTransactionDto })
   @ApiResponse({
     status: 201,
     description: 'Transferência realizada com sucesso',
   })
   @ApiResponse({ status: 400, description: 'Requisição inválida.' })
-  async transfer(@Body() dto: TransferTransactionDto) {
-    return this.transactionsService.transferTransaction(dto);
+  async transfer(@Body() transferTransactionDto: TransferTransactionDto) {
+    return this.transactionsService.transferTransaction(transferTransactionDto);
   }
 
   @Get(':userId')

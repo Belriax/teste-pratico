@@ -3,11 +3,10 @@ import { IsEnum, IsNumber, IsPositive, IsInt } from 'class-validator';
 
 export class CreateTransactionDto {
   @ApiProperty({
-    example: 'DEPOSITO || SAQUE',
     description: 'Tipo da transação',
   })
   @IsEnum(['DEPOSITO', 'SAQUE', 'TRASNFERIR'])
-  type: 'DEPOSITO' | 'SAQUE' | 'TRASNFEIR';
+  type: 'DEPOSITO' | 'SAQUE' | 'TRASNFERIR';
 
   @ApiProperty({ example: 50, description: 'Valor da transação' })
   @IsNumber()

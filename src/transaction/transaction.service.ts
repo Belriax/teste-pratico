@@ -22,11 +22,9 @@ export class TransactionsService {
     private readonly authService: AuthService,
   ) {}
 
-  private validateTransactionType(type: string): void {
-    if (!type || !['DEPOSITO', 'SAQUE'].includes(type)) {
-      throw new BadRequestException(
-        'O tipo de transação deve ser DEPOSITO OU SAQUE!',
-      );
+  private validateTransactionType(type: string) {
+    if (!type || !['DEPOSITO', 'SAQUE', 'TRASNFERIR'].includes(type)) {
+      throw new BadRequestException(type);
     }
   }
 
@@ -45,11 +43,14 @@ export class TransactionsService {
   }
 
   private handleDeposit(amount: number, user: User): void {
+    if (!+user.balance || !amount) {
+      throw new BadRequestException('Erro ao fazer deposito!');
+    }
     user.balance += amount;
   }
 
   private handleWithDraw(amount: number, user: User): void {
-    if (user.balance < amount) {
+    if (+user.balance < amount) {
       throw new BadRequestException('Saldo insuficiente');
     }
     user.balance -= amount;
@@ -79,6 +80,27 @@ export class TransactionsService {
     }
   }
 
+  async createWithDraw(
+    createTransactionDto: CreateTransactionDto,
+  ): Promise<Transaction> {
+    const { type, amount, userId } = createTransactionDto;
+
+    this.validateTransactionType(type);
+    this.validateTransactionAmount(amount);
+
+    const user = await this.getUserById(userId);
+
+    if (type === 'SAQUE') {
+      this.handleWithDraw(amount, user);
+    } else {
+      this.validateTransactionType('O tipo tem que ser SAQUE');
+    }
+
+    await this.updateUserBalance(user);
+
+    return await this.createAndSaveTransaction(type, amount, user);
+  }
+
   async createTransaction(
     createTransactionDto: CreateTransactionDto,
   ): Promise<Transaction> {
@@ -91,10 +113,9 @@ export class TransactionsService {
 
     if (type === 'DEPOSITO') {
       this.handleDeposit(amount, user);
-    } else if (type === 'SAQUE') {
-      this.handleWithDraw(amount, user);
+    } else {
+      this.validateTransactionType('O tipo tem que ser DEPOSITO');
     }
-
     await this.updateUserBalance(user);
 
     return await this.createAndSaveTransaction(type, amount, user);
@@ -172,7 +193,7 @@ export class TransactionsService {
       );
 
       const transaction = this.transactionRepository.create({
-        type: 'TRANSFERIR',
+        type: 'type',
         amount,
         user,
         targetUser,

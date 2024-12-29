@@ -52,19 +52,21 @@ export class AuthService {
 
   async findByEmail(email: string): Promise<User> {
     if (!email || !this.isValidEmail(email)) {
-      throw new BadRequestException('Email inválido, utilize um email válido.');
+      throw new BadRequestException(
+        'E-mail inválido, utilize um email válido.',
+      );
     }
 
     const user = await this.userRepository.findOne({ where: { email } });
     if (!user) {
-      throw new NotFoundException(`Email ${email} do usário não encontrado.`);
+      throw new NotFoundException(`E-mail ${email} do usário não encontrado.`);
     }
     return user;
   }
 
   async updateUserBalance(userId: number, newBalance: number): Promise<User> {
     if (newBalance < 0) {
-      throw new BadRequestException('Balance cannot be negative.');
+      throw new BadRequestException('O valor não pode ser negativo.');
     }
 
     const user = await this.findById(userId);
