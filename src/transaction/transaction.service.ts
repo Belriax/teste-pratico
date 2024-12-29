@@ -43,14 +43,11 @@ export class TransactionsService {
   }
 
   private handleDeposit(amount: number, user: User): void {
-    user.balance += amount;
+    user.balance = Number(user.balance) + Number(amount);
   }
 
   private handleWithDraw(amount: number, user: User): void {
-    if (+user.balance < amount) {
-      throw new BadRequestException('Saldo insuficiente');
-    }
-    user.balance -= amount;
+    user.balance = Number(user.balance) - Number(amount);
   }
 
   private async updateUserBalance(user: User): Promise<void> {
