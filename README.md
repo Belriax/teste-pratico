@@ -68,7 +68,7 @@ Certifique-se de ter as seguintes ferramentas instaladas:
 ### 1. Clone o Repositório
 
 ```bash
-git clone https://github.com/Viana-AlvesTiago/transactions-system.git
+git clone https://github.com/Belriax/teste-pratico.git
 cd transactions-system
 ```
 
@@ -198,10 +198,12 @@ docker-compose.override.yml       # Configuração extra do Docker Compose
   `POST /users/signup`  
 - **Login**:  
   `POST /auth/signin`  
-- **Depósito e Saque**:  
-  `POST /transactions`  
+- **Depósito**:  
+  `POST /depositar`
+-  **Saque**
+- `POST /sacar`  
 - **Transferência**:  
-  `POST /transactions/transfer`  
+  `POST /transactions/transferir`  
 - **Listar Transações**:  
   `GET /transactions/:userId`  
 
