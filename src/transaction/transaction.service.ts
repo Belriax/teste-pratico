@@ -119,40 +119,6 @@ export class TransactionsService {
     await this.updateUserBalance(user);
 
     return await this.createAndSaveTransaction(type, amount, user);
-
-    // if (!type || !['DEPOSITO', 'SAQUE'].includes(type)) {
-    //   throw new BadRequestException(
-    //     'O Tipo de transação deve ser DEPÓSITO OU SAQUE!',
-    //   );
-    // }
-    // if (amount <= 0) {
-    //   throw new BadRequestException('O Valor deve ser maior que zero.');
-    // }
-    // const user = await this.authService.findById(userId);
-    // if (!user) throw new NotFoundException('Usuário não encontrado.');
-
-    // if (type === 'DEPOSITO') {
-    //   user.balance = user.balance + amount;
-    // } else if (type === 'SAQUE') {
-    //   if (+user.balance < amount) {
-    //     throw new BadRequestException('Saldo insuficiente.');
-    //   }
-    //   user.balance = user.balance - amount;
-    // }
-
-    // await this.authService.updateUserBalance(user.id, user.balance);
-
-    // try {
-    //   const transaction = this.transactionRepository.create({
-    //     type,
-    //     amount,
-    //     user,
-    //   });
-
-    //   return await this.transactionRepository.save(transaction);
-    // } catch (error) {
-    //   return error;
-    // }
   }
 
   async transferTransaction(
