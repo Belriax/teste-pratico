@@ -145,39 +145,37 @@ npm run test
 
 ```plaintext
 src/
-│-- auth/  
-│   │-- auth.controller.ts         # Controlador do módulo de autenticação  
-│   │-- auth.dto.ts                # DTOs para autenticação  
-│   │-- auth.module.ts             # Módulo de autenticação  
-│   │-- auth.service.spec.ts       # Testes unitários para o serviço de autenticação  
-│   │-- auth.service.ts            # Serviço de autenticação  
-│   │-- jwt.strategy.ts            # Estratégia de autenticação JWT  
-│
-│-- queue/  
-│   │-- daily-report.processor.ts  # Processador para relatórios diários  
-│   │-- queue.module.ts            # Módulo de gerenciamento de filas  
-│   │-- queue.service.spec.ts      # Testes unitários do serviço de filas  
-│   │-- report.scheduler.ts        # Agendador para geração de relatórios  
-│   │-- transaction.process.ts     # Processamento de transações em fila  
-│
-│-- transactions/  
-│   │-- transaction.dto.ts         # DTOs para operações de transações  
-│   │-- transaction.entity.ts      # Entidade de transação  
-│   │-- transactions.controller.ts # Controlador do módulo de transações  
-│   │-- transactions.module.ts     # Módulo de transações  
-│   │-- transactions.service.spec.ts # Testes unitários para o serviço de transações  
-│   │-- transactions.service.ts    # Serviço de transações  
-│
-│-- user/  
-│   │-- user.controller.ts         # Controlador do módulo de usuários  
-│   │-- user.dto.ts                # DTOs para operações de usuário  
-│   │-- user.entity.ts             # Entidade de usuário  
-│   │-- user.module.ts             # Módulo de usuários  
-│   │-- user.service.spec.ts       # Testes unitários do serviço de usuários  
-│   │-- user.service.ts            # Serviço de usuários  
-│
-│-- app.module.ts                  # Módulo principal da aplicação  
-│-- main.ts                        # Arquivo principal de execução  
+├── auth/
+│   ├── dto/
+│   │   └── auth.dto.ts
+│   ├── entities/
+│   │   └── user.entity.ts
+│   ├── auth.controller.ts
+│   ├── auth.module.ts
+│   ├── auth.service.ts
+│   ├── jwt-auth.guard.ts
+│   └── jwt.strategy.ts
+├── config/
+│   ├── config.module.ts
+│   └── postgres.config.service.ts
+├── queue/
+│   ├── dto/
+│   │   └── daily-report.processor.ts
+│   ├── queue.module.ts
+│   ├── report.scheduler.ts
+│   └── transaction.process.ts
+├── transaction/
+│   ├── dto/
+│   │   └── transaction.dto.ts
+│   ├── entities/
+│   │   └── transaction.entity.ts
+│   ├── transaction.controller.ts
+│   ├── transaction.module.ts
+│   └── transaction.service.ts
+├── app.controller.ts
+├── app.module.ts
+├── app.service.ts
+└── main.ts                       # Arquivo principal de execução  
 ```
 
 ### Outros Arquivos
@@ -195,13 +193,15 @@ docker-compose.override.yml       # Configuração extra do Docker Compose
 ## 🔑 Endpoints Importantes
 
 - **Cadastro de Usuários**:  
-  `POST /users/signup`  
+  `POST /auth/signup`  
 - **Login**:  
   `POST /auth/signin`  
 - **Depósito**:  
-  `POST /depositar`
--  **Saque**
-- `POST /sacar`  
+  `POST /transactions/deposito`
+- **Saque**:  
+  `POST /transactions/sacar`  
+- **Transferência**:
+  `POST /transactions/transferir`
 - **Transferência**:  
   `POST /transactions/transferir`  
 - **Listar Transações**:  
