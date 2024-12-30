@@ -201,7 +201,7 @@ docker-compose.override.yml       # Configuração extra do Docker Compose
 - **Saque**:  
   `POST /transactions/sacar`
 - **Transferência**:
-- `POST /transactions/transferir`
+  `POST /transactions/transferir`
 - **Listar Transações**:  
   `GET /transactions/:userId`  
 
